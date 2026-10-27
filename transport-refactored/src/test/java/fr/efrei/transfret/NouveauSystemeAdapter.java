@@ -23,45 +23,36 @@ import java.util.stream.Collectors;
 /**
  * Branche le nouveau code sur les tests de contrat.
  * <p>
- * Tout le « bricolage » nécessaire pour tester le code (état statique à vider,
- * conversion des codes {@code String}/{@code int}…) est confiné ici.
+ * La traduction entre le contrat neutre et le modèle métier est confinée ici.
  */
 public class NouveauSystemeAdapter implements SystemeTransport {
 
-    private ServiceClient serviceClient;
-    private ServiceExpedition serviceExpedition;
+    private NouveauSystemeConfiguration configuration;
 
     @Override
     public void reinitialiser() {
-        Database.getInstance();
-        Database.expeditions.clear();
-        Database.clients.clear();
-        EmailService.journal.clear();
-        SmsService.journal.clear();
-        ServiceExpedition.compteur = 0;
-        Flotte.initialiser();
-        serviceClient = new ServiceClient();
-        serviceExpedition = new ServiceExpedition();
+        configuration = NouveauSystemeConfiguration.creer();
     }
 
     @Override
     public Optional<String> creerClient(DemandeClient d) {
-        Client client = serviceClient.creerClient(d.nom(), d.email(), d.telephone(), d.adresse(),
+        Client client = configuration.serviceClient().creerClient(d.nom(), d.email(), d.telephone(), d.adresse(),
                 TypeClient.valueOf(d.type().name()), d.siret());
         return Optional.ofNullable(client).map(Client::getEmail);
     }
 
     @Override
     public Optional<String> creerExpedition(DemandeExpedition d) {
-        Client client = Database.clients.get(d.refClient());
-        Expedition expedition = serviceExpedition.creerExpedition(client, versColis(d.colis()), d.villeDepart(),
-                d.villeArrivee(), ModeTransport.valueOf(d.mode().name()), d.urgent(), d.assurance());
+        Client client = configuration.clients().trouverParEmail(d.refClient());
+        Expedition expedition = configuration.serviceExpedition().creerExpedition(client, versColis(d.colis()), d.villeDepart(),
+                d.villeArrivee(), ModeTransport.valueOf(d.mode().name()),
+                d.urgent(), d.assurance());
         return Optional.ofNullable(expedition).map(Expedition::getId);
     }
 
     @Override
     public Optional<EtatExpedition> consulter(String id) {
-        Expedition e = Database.expeditions.get(id);
+        Expedition e = configuration.expeditions().trouverParId(id);
         if (e == null) {
             return Optional.empty();
         }
@@ -72,40 +63,40 @@ public class NouveauSystemeAdapter implements SystemeTransport {
 
     @Override
     public OptionalDouble devisTTC(DemandeDevis d) {
-        double devis = serviceExpedition.calculerDevis(versColis(d.colis()), d.villeDepart(), d.villeArrivee(),
+        double devis = configuration.serviceExpedition().calculerDevis(versColis(d.colis()), d.villeDepart(), d.villeArrivee(),
                 ModeTransport.valueOf(d.mode().name()), d.urgent(), d.assurance(),
                 TypeClient.valueOf(d.typeClient().name()));
-        return devis == -1 ? OptionalDouble.empty() : OptionalDouble.of(devis);
+        return devis == Distances.DISTANCE_INCONNUE ? OptionalDouble.empty() : OptionalDouble.of(devis);
     }
 
     @Override
     public boolean demarrer(String id) {
-        return serviceExpedition.demarrerExpedition(id);
+        return configuration.serviceExpedition().demarrerExpedition(id);
     }
 
     @Override
     public boolean livrer(String id) {
-        return serviceExpedition.livrerExpedition(id);
+        return configuration.serviceExpedition().livrerExpedition(id);
     }
 
     @Override
     public boolean annuler(String id) {
-        return serviceExpedition.annulerExpedition(id);
+        return configuration.serviceExpedition().annulerExpedition(id);
     }
 
     @Override
     public Optional<String> facture(String id) {
-        GenerateurFacture generateurFacture = new GenerateurFacture();
-        return Optional.ofNullable(Database.expeditions.get(id)).map(generateurFacture::generer);
+        return Optional.ofNullable(configuration.expeditions().trouverParId(id))
+                .map(configuration.generateurFacture()::generer);
     }
 
     @Override
     public List<Notification> notifications() {
         List<Notification> notifications = new ArrayList<>();
-        for (String[] email : EmailService.journal) {
+        for (String[] email : configuration.canalNotification().emailsEnvoyes()) {
             notifications.add(new Notification(Canal.EMAIL, email[0], email[1]));
         }
-        for (String[] sms : SmsService.journal) {
+        for (String[] sms : configuration.canalNotification().smsEnvoyes()) {
             notifications.add(new Notification(Canal.SMS, sms[0], sms[1]));
         }
         return notifications;
