@@ -25,3 +25,4 @@
 | FLUVIAL | `IVehicule` et nouvelle classe `Peniche` | Définir les opérations de la péniche |
 | Hors gabarit | `Colis` | Détecter une dimension supérieure à 200 cm |
 | Hors gabarit | `CalculateurPrix.calculerPrixHT()` | Appliquer une majoration unique de 10 % |
+
