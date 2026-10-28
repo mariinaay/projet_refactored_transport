@@ -13,7 +13,7 @@ public class Main {
         Notificateur notificateur = new Notificateur(canalNotification);
         ServiceClient serviceClient = new ServiceClient(clients, notificateur, new ValidateurClient());
         ServiceExpedition serviceExpedition = new ServiceExpedition(expeditions,
-                new CalculateurPrix(),
+                new CalculateurPrix(new AssemblagePrix()),
                 new AffectationVehicule(flotte), new ValidateurExpedition(), new EstimateurDelai(),
                 notificateur);
 
