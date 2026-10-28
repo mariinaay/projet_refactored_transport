@@ -26,7 +26,8 @@ public class Flotte {
                 new CamionFrigorifique(IMMATRICULATION_CAMION_FRIGORIFIQUE, CAPACITE_CAMION_FRIGORIFIQUE_KG),
                 new Train(IMMATRICULATION_TRAIN, CAPACITE_TRAIN_KG),
                 new Bateau(IMMATRICULATION_BATEAU, CAPACITE_BATEAU_KG, true),
-                new Avion(IMMATRICULATION_AVION, CAPACITE_AVION_KG));
+                new Avion(IMMATRICULATION_AVION, CAPACITE_AVION_KG),
+                new Peniche(ModeTransport.FLUVIAL));
     }
 
     public List<Vehicule> getVehicules() {

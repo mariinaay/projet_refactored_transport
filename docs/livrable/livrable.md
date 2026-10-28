@@ -29,3 +29,20 @@
 # Étape 5 – Choix des stratégies
 
 Le choix retenu est de faire porter la stratégie par chaque constante de `ModeTransport` : l'association reste directe. Une map injectée permettrait de remplacer les stratégies à l'assemblage, mais demanderait de maintenir les correspondances séparément.
+
+# Étape 8 – Bilan des extensions
+
+## Fichiers existants modifiés
+
+- FLUVIAL : 3 fichiers existants modifiés (`ModeTransport`, `Flotte`, `Distances`), contre 6 prévus avant refactoring.
+- Hors gabarit : 1 fichier existant modifié (`AssemblagePrix`), contre 2 prévus avant refactoring.
+
+Au total : 4 fichiers applicatifs modifiés, ainsi que 2 fichiers de tests (`DecorateursPrixTest`, `NouveauSystemeConfiguration`).
+
+## Les 68 tests passent-ils toujours ?
+
+Non. Dans le module refactoré, 62 tests de contrat passent et 6 échouent après l'ajout du hors gabarit, car les prix attendus n'incluent pas les 10 % supplémentaires. Les assertions restent inchangées. Jusqu'à l'étape 7, les 68 tests passaient. Les 68 tests legacy et les 38 tests supplémentaires passent toujours ; `mvn install` échoue sur les 6 écarts.
+
+## Tests unitaires des nouvelles classes
+
+Les tests sont dans `ExtensionFluvialeTest` et `DecorateursPrixTest` : tarif et délai fluviaux, péniche, restrictions, seuil de 200 cm et majoration hors gabarit appliquée une seule fois.

@@ -6,6 +6,7 @@ public final class Distances {
     private static final int DISTANCE_PARIS_LYON = 465;
     private static final int DISTANCE_PARIS_MARSEILLE = 775;
     private static final int DISTANCE_PARIS_LILLE = 225;
+    private static final int DISTANCE_PARIS_LE_HAVRE = 365;
     private static final int DISTANCE_PARIS_BORDEAUX = 585;
     private static final int DISTANCE_LYON_MARSEILLE = 315;
     private static final int DISTANCE_LE_HAVRE_NEW_YORK = 5850;
@@ -25,6 +26,8 @@ public final class Distances {
             return DISTANCE_PARIS_MARSEILLE;
         } else if ((a.equals("PARIS") && b.equals("LILLE")) || (a.equals("LILLE") && b.equals("PARIS"))) {
             return DISTANCE_PARIS_LILLE;
+        } else if ((a.equals("PARIS") && b.equals("LE HAVRE")) || (a.equals("LE HAVRE") && b.equals("PARIS"))) {
+            return DISTANCE_PARIS_LE_HAVRE;
         } else if ((a.equals("PARIS") && b.equals("BORDEAUX")) || (a.equals("BORDEAUX") && b.equals("PARIS"))) {
             return DISTANCE_PARIS_BORDEAUX;
         } else if ((a.equals("LYON") && b.equals("MARSEILLE")) || (a.equals("MARSEILLE") && b.equals("LYON"))) {

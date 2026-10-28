@@ -13,7 +13,7 @@ record NouveauSystemeConfiguration(ServiceClient serviceClient, ServiceExpeditio
         Notificateur notificateur = new Notificateur(canalNotification);
         ServiceClient serviceClient = new ServiceClient(clients, notificateur, new ValidateurClient());
         ServiceExpedition serviceExpedition = new ServiceExpedition(expeditions,
-                new CalculateurPrix(new AssemblagePrix(java.util.List.of())),
+                new CalculateurPrix(new AssemblagePrix()),
                 new AffectationVehicule(flotte),
                 new ValidateurExpedition(), new EstimateurDelai(), notificateur);
         return new NouveauSystemeConfiguration(serviceClient, serviceExpedition, clients, expeditions,

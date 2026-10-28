@@ -5,7 +5,8 @@ public enum ModeTransport implements StrategieModeTransport {
     ROUTE(new ModeRoute()),
     RAIL(new ModeRail()),
     MER(new ModeMer()),
-    AIR(new ModeAir());
+    AIR(new ModeAir()),
+    FLUVIAL(new ModeFluvial());
 
     private final StrategieModeTransport strategie;
 

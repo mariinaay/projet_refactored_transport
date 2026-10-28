@@ -8,7 +8,7 @@ public class AssemblagePrix {
     private final List<ReglePrix> reglesPrix;
 
     public AssemblagePrix() {
-        this(List.of());
+        this(List.of(new RegleHorsGabarit()));
     }
 
     public AssemblagePrix(List<ReglePrix> reglesPrix) {

@@ -26,6 +26,11 @@ class DecorateursPrixTest {
     }
 
     @Test
+    void supplementHorsGabaritAjouteDixPourCent() {
+        assertEquals(110.0, new SupplementHorsGabarit(() -> 100.0).calculer(), 0.001);
+    }
+
+    @Test
     void supplementUrgenceAjouteCinquantePourCent() {
         assertEquals(150.0, new SupplementUrgence(() -> 100.0).calculer(), 0.001);
     }
