@@ -26,3 +26,6 @@
 | Hors gabarit | `Colis` | Détecter une dimension supérieure à 200 cm |
 | Hors gabarit | `CalculateurPrix.calculerPrixHT()` | Appliquer une majoration unique de 10 % |
 
+# Étape 5 – Choix des stratégies
+
+Le choix retenu est de faire porter la stratégie par chaque constante de `ModeTransport` : l'association reste directe. Une map injectée permettrait de remplacer les stratégies à l'assemblage, mais demanderait de maintenir les correspondances séparément.
