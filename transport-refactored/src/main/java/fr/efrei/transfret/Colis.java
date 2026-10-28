@@ -28,6 +28,10 @@ public class Colis {
         return (longueur * largeur * hauteur) / CENTIMETRES_CUBES_PAR_METRE_CUBE;
     }
 
+    public boolean estRefrigere() {
+        return type.estRefrigere();
+    }
+
     public String getLibelleType() {
         if (type == null) {
             return "Inconnu";

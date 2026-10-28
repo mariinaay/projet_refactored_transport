@@ -8,6 +8,20 @@ public enum TypeMarchandise {
             return prix;
         }
 
+        @Override
+        public boolean autoriseCamion(boolean adr) {
+            return true;
+        }
+
+        @Override
+        public boolean autoriseCamionFrigorifique() {
+            return false;
+        }
+
+        @Override
+        public boolean autoriseBateau(boolean conteneursRefrigeres) {
+            return true;
+        }
     },
     FRAGILE("Fragile") {
         @Override
@@ -15,6 +29,20 @@ public enum TypeMarchandise {
             return new SupplementFragile(prix);
         }
 
+        @Override
+        public boolean autoriseCamion(boolean adr) {
+            return true;
+        }
+
+        @Override
+        public boolean autoriseCamionFrigorifique() {
+            return false;
+        }
+
+        @Override
+        public boolean autoriseBateau(boolean conteneursRefrigeres) {
+            return true;
+        }
     },
     DANGEREUX("Dangereux") {
         @Override
@@ -22,11 +50,40 @@ public enum TypeMarchandise {
             return new SupplementDangereux(prix);
         }
 
+        @Override
+        public boolean autoriseCamion(boolean adr) {
+            return adr;
+        }
+
+        @Override
+        public boolean autoriseCamionFrigorifique() {
+            return false;
+        }
+
+        @Override
+        public boolean autoriseBateau(boolean conteneursRefrigeres) {
+            return true;
+        }
     },
     REFRIGERE("Réfrigéré") {
         @Override
         public Prix appliquerSupplement(Prix prix) {
             return new SupplementRefrigere(prix);
+        }
+
+        @Override
+        public boolean autoriseCamion(boolean adr) {
+            return false;
+        }
+
+        @Override
+        public boolean autoriseCamionFrigorifique() {
+            return true;
+        }
+
+        @Override
+        public boolean autoriseBateau(boolean conteneursRefrigeres) {
+            return conteneursRefrigeres;
         }
 
         @Override
@@ -46,6 +103,12 @@ public enum TypeMarchandise {
     }
 
     public abstract Prix appliquerSupplement(Prix prix);
+
+    public abstract boolean autoriseCamion(boolean adr);
+
+    public abstract boolean autoriseCamionFrigorifique();
+
+    public abstract boolean autoriseBateau(boolean conteneursRefrigeres);
 
     public boolean estRefrigere() {
         return false;

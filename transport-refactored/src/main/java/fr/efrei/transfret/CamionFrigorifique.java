@@ -7,16 +7,19 @@ public class CamionFrigorifique extends Camion {
     }
 
     @Override
-    public void charger(Colis colis) {
-        // un camion frigo ne prend QUE des colis réfrigérés
-        if (colis.getType() != TypeMarchandise.REFRIGERE) {
-            throw new IllegalArgumentException("Un camion frigorifique ne transporte que des produits réfrigérés");
-        }
-        super.charger(colis);
+    protected boolean peutTransporter(Colis colis) {
+        return colis.getType().autoriseCamionFrigorifique();
     }
 
     @Override
-    public void activerRefrigeration(double temperature) {
-        System.out.println("Réfrigération activée à " + temperature + "°C sur " + immatriculation);
+    protected boolean accepteListeVide() {
+        return false;
+    }
+
+    @Override
+    public void partir(int distanceKm) {
+        super.partir(distanceKm);
+        System.out.println("Réfrigération activée à " + TEMPERATURE_REFRIGERATION_CELSIUS + "°C sur "
+                + immatriculation);
     }
 }

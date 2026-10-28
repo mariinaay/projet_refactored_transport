@@ -12,10 +12,6 @@ public class ServiceExpedition {
     private static final double TAUX_FRAIS_ANNULATION = 0.50;
     private static final int ID_ALEATOIRE_MINIMUM = 1000;
     private static final int NOMBRE_IDS_ALEATOIRES = 9000;
-    private static final double KILOMETRES_PAR_MILLE_NAUTIQUE = 1.852;
-    private static final int DISTANCE_ROULAGE_AVION_KM = 2;
-    private static final int ALTITUDE_VOL = 35000;
-    private static final int NIVEAU_REFROIDISSEMENT = 4;
 
     private int compteur = 0;
 
@@ -78,16 +74,17 @@ public class ServiceExpedition {
         expeditionRepository.sauvegarder(e);
         notificateur.notifier(client, "Confirmation de votre expédition " + e.getId(),
                 "Votre expédition " + villeDepart + " -> " + villeArrivee + " (" + mode + ") a été enregistrée. Montant : " + e.getPrixTTC() + " € TTC.",
-                "TransFret : expédition " + e.getId() + " créée, livraison prévue le " + Dates.formater(e.getDateLivraisonPrevue()));
+                "TransFret : expédition " + e.getId() + " créée, livraison prévue le "
+                        + Dates.formater(e.getDateLivraisonPrevue()));
         return e;
     }
 
-    // retourne le prix TTC, -1 si le trajet est inconnu
+    // retourne le prix TTC, Distances.DISTANCE_INCONNUE si le trajet est inconnu
     public double calculerDevis(List<Colis> colis, String villeDepart, String villeArrivee, ModeTransport mode,
                                 boolean urgent, boolean assurance, TypeClient typeClient) {
         int distance = Distances.getDistance(villeDepart, villeArrivee);
-        if (distance == -1) {
-            return -1;
+        if (distance == Distances.DISTANCE_INCONNUE) {
+            return Distances.DISTANCE_INCONNUE;
         }
         double ht = calculateur.calculerPrixHT(colis, distance, mode, urgent, assurance, typeClient);
         return Montants.arrondir(ht * (1 + TAUX_TVA));
@@ -102,24 +99,7 @@ public class ServiceExpedition {
         e.setStatut(StatutExpedition.EN_COURS);
         Vehicule v = e.getVehicule();
         v.setDisponible(false);
-        try {
-            v.faireLePlein();
-        } catch (Exception ex) {
-        }
-        if (e.getMode() == ModeTransport.ROUTE || e.getMode() == ModeTransport.RAIL) {
-            v.rouler(e.getDistance());
-        } else if (e.getMode() == ModeTransport.MER) {
-            v.naviguer((int) (e.getDistance() / KILOMETRES_PAR_MILLE_NAUTIQUE));
-        } else if (e.getMode() == ModeTransport.AIR) {
-            v.rouler(DISTANCE_ROULAGE_AVION_KM);
-            v.voler(ALTITUDE_VOL);
-        }
-        for (Colis c : e.getColis()) {
-            if (c.getType() == TypeMarchandise.REFRIGERE) {
-                v.activerRefrigeration(NIVEAU_REFROIDISSEMENT);
-                break;
-            }
-        }
+        v.partir(e.getDistance());
         expeditionRepository.mettreAJourStatut(e);
         notificateur.notifier(e.getClient(), "Votre expédition " + e.getId() + " est en route",
                 "Votre expédition a quitté " + e.getVilleDepart() + ".",
